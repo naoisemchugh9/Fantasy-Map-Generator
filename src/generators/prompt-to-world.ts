@@ -464,8 +464,4 @@ export class PromptToWorldModule {
   }
 }
 
-declare global {
-  var PromptToWorld: PromptToWorldModule;
-}
-
 window.PromptToWorld = new PromptToWorldModule();

@@ -51,7 +51,7 @@ function openPromptToWorldDialog() {
     ensureEl("promptToWorldStatus").textContent = "";
   }
 
-  async function runPromptGeneration(dialogEl) {
+  function runPromptGeneration(dialogEl) {
     const text = ensureEl("promptToWorldInput").value.trim();
     if (!text) {
       tip("Please describe your world first", true, "error", 4000);
@@ -77,14 +77,15 @@ function openPromptToWorldDialog() {
       // Apply overrides to the UI inputs (locks the changed settings)
       PromptToWorld.applyOverrides(overrides);
 
+      // Store metadata before regeneration; seed updates asynchronously,
+      // so metadata.seed reflects the pre-generation seed (known limitation).
+      PromptToWorld.storeMetadata(text, spec, overrides);
+
       // Close dialog before regeneration so the map is fully visible
       $(dialogEl).dialog("close");
 
       // Trigger map regeneration; seed is re-rolled automatically
-      await regenerateMap("prompt-to-world");
-
-      // Store metadata (seed is set during regeneration, read it after)
-      PromptToWorld.storeMetadata(text, spec, overrides);
+      regenerateMap("prompt-to-world");
 
       tip("World generated from your description!", true, "success", 5000);
     } catch (err) {
