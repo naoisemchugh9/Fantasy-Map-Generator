@@ -26,7 +26,49 @@ _Inspiration:_
 
 - Scott Turner's [_Here Dragons Abound_](https://heredragonsabound.blogspot.com)
 
-## Contribution
+## Prompt-to-World Generation
+
+The **World from Description** feature lets you describe a fantasy world in plain language and generate a map based on that description — no external API keys required.
+
+### How to use
+
+1. Open the **Tools** tab in the side menu.
+2. Click **World from Description** (under the _Generate_ section).
+3. Type a free-form description of your world, then click **Generate** (or press `Ctrl+Enter`).
+4. The generator parses your description, applies the detected settings, and runs the normal map generation pipeline.
+
+### What you can describe
+
+| Category | Examples |
+|---|---|
+| **Geography** | _supercontinent, pangea, archipelago, island chain, mediterranean, peninsula, continents_ |
+| **Climate** | _cold arctic, tropical, temperate, arid desert, wet rainy, monsoon_ |
+| **Political structure** | _few large kingdoms, empire, many city-states, fragmented, tribal_ |
+| **Settlements** | _coastal trade cities, sparse wilderness, dense and bustling, maritime_ |
+| **Culture flavor** | _european, oriental, far east, high fantasy (elves, dwarves), dark fantasy_ |
+| **Religion** | _polytheistic / many gods, monotheistic / one religion_ |
+
+**Example prompts:**
+- `"A cold arctic supercontinent with few large kingdoms and sparse settlements"`
+- `"A tropical archipelago world with many city-states and coastal trade cities"`
+- `"A high fantasy world with elves and dwarves, temperate, and a few vast empires"`
+
+### How it works
+
+The parser converts keywords into generation-settings overrides (heightmap template, state count, temperatures, precipitation, culture set, etc.) and locks them before calling the standard `regenerateMap()` pipeline. All existing editors, renderers, and save/load functionality work normally on the result.
+
+The original prompt, parsed spec, and derived overrides are saved in `options.promptMetadata` and persisted in `.map` files for reproducibility.
+
+### Limitations
+
+- The parser is **keyword-based** — complex or contradictory descriptions may not produce the expected result. Simpler, direct descriptions work best.
+- Only a subset of generation settings are influenced; everything else is still randomized.
+- The same prompt with the same seed will produce the same map, but different seeds always differ.
+- For AI-assisted text generation (names, lore, etc.), use the separate **AI Text Generator** in the editors.
+
+---
+
+
 
 Pull requests are highly welcomed. The codebase is messy and I will appreciate if you start with minor changes. Check out the [data model](https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Data-model) before contributing.
 
