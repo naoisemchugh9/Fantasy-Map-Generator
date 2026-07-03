@@ -1,4 +1,5 @@
 import { Services } from "@/services";
+import { resolveStartupScenarioUrl } from "@/services/io/startup-scenarios";
 import { calculateVoronoi, ensureEl, last, link, minmax, parseError, rn } from "@/utils";
 
 async function quickLoad(): Promise<void> {
@@ -72,16 +73,8 @@ function loadMapPrompt(blob: Blob): void {
 }
 
 async function loadMapFromURL(maplink: string, random?: boolean): Promise<void> {
-  const controller = new AbortController();
-  const TIMEOUT = 120000; // 120 seconds
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
-
   try {
-    const url = decodeURIComponent(maplink);
-    const response = await fetch(url, { method: "GET", mode: "cors", signal: controller.signal });
-    if (!response.ok) throw new Error("Cannot load map from URL");
-
-    const blob = await response.blob();
+    const { blob } = await fetchMapBlob(maplink);
     uploadMap(blob);
   } catch (error) {
     const message =
@@ -90,9 +83,50 @@ async function loadMapFromURL(maplink: string, random?: boolean): Promise<void> 
         : (error as Error).message;
     showUploadErrorMessage(message, maplink, random);
     if (random) generateMapOnLoad();
+  }
+}
+
+async function fetchMapBlob(maplink: string): Promise<{ blob: Blob; contentType: string }> {
+  const controller = new AbortController();
+  const TIMEOUT = 120000; // 120 seconds
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+
+  try {
+    const url = decodeURIComponent(maplink);
+    const response = await fetch(url, { method: "GET", mode: "cors", signal: controller.signal });
+    if (!response.ok) throw new Error("Cannot load map from URL");
+    return { blob: await response.blob(), contentType: response.headers.get("content-type") || "" };
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+async function loadStartupScenario(locationHref: string): Promise<boolean> {
+  const scenarioUrl = resolveStartupScenarioUrl(locationHref);
+  if (!scenarioUrl) return false;
+
+  try {
+    const { blob, contentType } = await fetchMapBlob(scenarioUrl);
+    if (contentType.startsWith("text/html")) return false;
+    const isLoadable = await isLoadableMap(blob);
+    if (!isLoadable) return false;
+    uploadMap(blob);
+    return true;
+  } catch (error) {
+    ERROR && console.error("Bundled startup scenario failed to load", error);
+    return false;
+  }
+}
+
+async function isLoadableMap(blob: Blob): Promise<boolean> {
+  const result = await blob.arrayBuffer();
+  const { mapData, mapVersion } = await parseLoadedResult(result);
+  if (!mapData || !mapVersion || mapData.length < 10 || !mapData[5]) return false;
+  if (!isValidVersion(mapVersion)) return false;
+
+  const isAncient = compareVersions(mapVersion, "0.70.0").isOlder;
+  const isNewer = compareVersions(mapVersion, VERSION).isNewer;
+  return !isAncient && !isNewer;
 }
 
 function showUploadErrorMessage(error: string, maplink: string, random?: boolean): void {
@@ -845,6 +879,8 @@ export const Load = {
   loadFromDropbox,
   createSharableDropboxLink,
   loadMapFromURL,
+  loadStartupScenario,
   showUploadErrorMessage,
+  resolveStartupScenarioUrl,
   uploadMap
 };

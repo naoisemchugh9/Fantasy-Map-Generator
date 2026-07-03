@@ -68,6 +68,24 @@ The original prompt, parsed spec, and derived overrides are saved in `options.pr
 
 ---
 
+## Bundled startup scenario: Monocerotia
+
+This repository now bundles a premade startup scenario at `public/scenarios/Monocerotia.map`.
+
+- By default, the app tries to load `Monocerotia.map` on startup.
+- If the bundled scenario cannot be fetched or parsed, startup safely falls back to the normal behavior (`lastSaved` if configured, otherwise random generation).
+- `?scenario=monocerotia` explicitly enables the bundled startup scenario.
+- `?scenario=none` disables the bundled scenario and restores the normal startup path.
+
+### Replacing or updating the scenario
+
+1. Author or export the replacement `.map` file from the app.
+2. Save it as `Monocerotia.map`.
+3. Replace `public/scenarios/Monocerotia.map` with the new file.
+4. Reload the app. The new bundled scenario will auto-load on startup unless `?scenario=none` is set.
+
+The bundled asset included here is intended to be easy to replace as the Monocerotia world is refined.
+
 
 
 Pull requests are highly welcomed. The codebase is messy and I will appreciate if you start with minor changes. Check out the [data model](https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Data-model) before contributing.
