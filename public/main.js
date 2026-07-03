@@ -342,6 +342,12 @@ async function checkLoadParameters() {
     return;
   }
 
+  const isStartupScenarioLoaded = await window.Services.Load.loadStartupScenario(window.location.href);
+  if (isStartupScenarioLoaded) {
+    WARN && console.warn("Loading bundled startup scenario");
+    return;
+  }
+
   // check if there is a map saved to indexedDB
   if (ensureEl("onloadBehavior").value === "lastSaved") {
     try {
