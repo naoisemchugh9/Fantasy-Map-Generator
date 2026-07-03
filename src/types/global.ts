@@ -4,6 +4,7 @@ import type { GoodsModule } from "../generators/goods-generator";
 import type { MarketsModule } from "../generators/markets-generator";
 import type { NameBase } from "../generators/names-generator";
 import type { ProductionModule } from "../generators/production-generator";
+import type { PromptMetadata, PromptToWorldModule } from "../generators/prompt-to-world";
 import type { PackedGraph } from "./PackedGraph";
 
 declare global {
@@ -19,6 +20,7 @@ declare global {
   var DEBUG: { stateLabels?: boolean; [key: string]: boolean | undefined };
   var options: Options;
 
+  var PromptToWorld: PromptToWorldModule;
   var heightmapTemplates: any;
   var Goods: GoodsModule;
   var Production: ProductionModule;
@@ -331,6 +333,8 @@ type Options = {
     animation: ReturnType<typeof TradeAnimation.getDefaultOptions>;
   };
   threeD: ThreeDOptions;
+  /** Persisted metadata from the last prompt-based generation, if any. */
+  promptMetadata?: PromptMetadata;
 };
 
 type BurgGroup = {

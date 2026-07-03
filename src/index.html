@@ -2235,6 +2235,16 @@
             <button id="openSubmapTool" data-tip="Click to generate a submap from the current viewport">Submap</button>
             <button id="openTransformTool" data-tip="Click to transform the map">Transform</button>
           </div>
+          <div class="separator">Generate</div>
+          <div class="grid">
+            <button
+              id="openPromptToWorldButton"
+              data-tip="Describe your world in natural language and generate a map from the description"
+              onclick="openPromptToWorldDialog()"
+            >
+              World from Description
+            </button>
+          </div>
         </div>
         <div id="customizationMenu" class="tabcontent">
           <p>Heightmap customization tools:</p>
@@ -4757,6 +4767,28 @@
               />
             </label>
           </div>
+        </div>
+      </div>
+      <div id="promptToWorldDialog" class="dialog stable" style="display: none">
+        <div style="display: flex; flex-direction: column; gap: 0.5em; width: 100%">
+          <label for="promptToWorldInput" style="font-weight: bold">Describe your world:</label>
+          <textarea
+            id="promptToWorldInput"
+            placeholder="e.g. A cold arctic world with a supercontinent, few large kingdoms, and sparse settlements"
+            cols="40"
+            rows="5"
+            style="resize: vertical"
+          ></textarea>
+          <div id="promptToWorldPreview" style="font-size: 0.9em; min-height: 1.5em"></div>
+          <div
+            id="promptToWorldStatus"
+            style="font-size: 0.85em; color: #666; min-height: 1.2em"
+          ></div>
+          <p style="font-size: 0.8em; color: #888; margin: 0">
+            <b>Tip:</b> Describe geography (e.g. archipelago, supercontinent), climate (cold, tropical, arid),
+            political structure (few large kingdoms, many city-states), and settlement style (coastal trade cities,
+            sparse wilderness). Press <kbd>Ctrl+Enter</kbd> to generate.
+          </p>
         </div>
       </div>
       <div id="emblemEditor" class="dialog stable" style="display: none">
@@ -8757,6 +8789,7 @@
     <script defer src="modules/ui/units-editor.js?v=1.120.5"></script>
     <script defer src="modules/ui/notes-editor.js?v=1.120.5"></script>
     <script defer src="modules/ui/ai-generator.js?v=1.120.5"></script>
+    <script defer src="modules/ui/prompt-to-world.js?v=1.134.1"></script>
     <script defer src="modules/ui/diplomacy-editor.js?v=1.120.5"></script>
     <script defer src="modules/ui/zones-editor.js?v=1.120.5"></script>
     <script defer src="modules/ui/markers-overview.js?v=1.125.0"></script>

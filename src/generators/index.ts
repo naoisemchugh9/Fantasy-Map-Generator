@@ -1,3 +1,4 @@
+import "./prompt-to-world";
 import "./voronoi";
 import "./heightmap-generator";
 import "./features";
